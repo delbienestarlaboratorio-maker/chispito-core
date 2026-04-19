@@ -13,9 +13,9 @@ const TELESECUNDARIA_GRADES = [
 ];
 
 const PREPA_CARDS = [
-    { id: "simulador-unam", titulo: "Simulador UNAM", subtitulo: "Examen 120 Reactivos", emoji: "🦅", color: "#EAB308", href: "https://prepa.chispito.mx/unam/simulador" },
-    { id: "catalogo-ecoems", titulo: "Catálogo ECOEMS", subtitulo: "Prepas sin examen CDMX", emoji: "🏛️", color: "#3B82F6", href: "https://prepa.chispito.mx/ecoems/escuelas" },
-    { id: "blog-prepa", titulo: "Guías de Estudio", subtitulo: "Blog CCH, IPN, ENP", emoji: "📚", color: "#10B981", href: "https://prepa.chispito.mx/blog" },
+    { id: "simulador-unam", titulo: "Simulador UNAM", subtitulo: "Examen 120 Reactivos", emoji: "🦅", color: "#EAB308", href: "/unam/simulador" },
+    { id: "catalogo-ecoems", titulo: "Catálogo ECOEMS", subtitulo: "Prepas sin examen CDMX", emoji: "🏛️", color: "#3B82F6", href: "/ecoems/escuelas" },
+    { id: "blog-prepa", titulo: "Guías de Estudio", subtitulo: "Blog CCH, IPN, ENP", emoji: "📚", color: "#10B981", href: "/prepa/blog" },
 ];
 
 const GRADOS = [...IMPORTED_GRADOS.filter(g => g.nivel !== "telesecundaria" && g.nivel !== "bachillerato")];
@@ -104,7 +104,7 @@ export default function GradeSelector() {
                                             viewport={{ once: true }}
                                             transition={{ delay: i * 0.07 }}
                                         >
-                                            <a href={`https://telesecundaria.chispito.mx/${grado.slug}`} className="block">
+                                            <a href={`/${grado.slug}`} className="block">
                                                 <div
                                                     className="grade-card p-5 text-center select-none"
                                                     style={{
