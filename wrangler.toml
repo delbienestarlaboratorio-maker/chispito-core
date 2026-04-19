@@ -1,0 +1,12 @@
+# Cloudflare Pages configuration for Chispito Core
+name = "chispito-core"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next/assets"
+
+[vars]
+NEXT_PUBLIC_SITE_URL = "https://chispito.mx"
+NEXT_PUBLIC_SUPABASE_URL = "https://mfoykwtcggnklqkbmrjr.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_EyPLFaQCfn5kT10gnSoElg_PztfvP2f"
+NEXT_PUBLIC_PLAN_V2_PRECIO = "9900"
+NEXT_PUBLIC_PLAN_V3_PRECIO = "24900"
