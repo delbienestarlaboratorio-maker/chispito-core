@@ -10,6 +10,7 @@ async function getGradoData(slug: string): Promise<GradoContenido | undefined> {
     switch (slug) {
         case "preescolar-1": return (await import("@/data/content-preescolar1")).PREESCOLAR_1_COMPLETE;
         case "preescolar-2": return (await import("@/data/content-grados-superiores")).PREESCOLAR_2;
+        case "preescolar-3":
         case "kinder": return (await import("@/data/content-kinder")).KINDER;
         case "primaria-1": return (await import("@/data/content-primaria")).PRIMARIA_1;
         case "primaria-2": return (await import("@/data/content-primaria")).PRIMARIA_2;
@@ -45,14 +46,23 @@ const MESES_SEP = [
 
 function mesMatchesBloque(mesSep: string, bloquesMeses: string): boolean {
     const m = mesSep.toLowerCase();
-    const bm = bloquesMeses.toLowerCase()
-        .replace("agosto–sept", "agosto,septiembre")
-        .replace("oct–nov", "octubre,noviembre")
-        .replace("dic–ene", "diciembre,enero")
-        .replace("feb–mar", "febrero,marzo")
-        .replace("abr–jun", "abril,mayo,junio")
-        .replace("julio", "julio");
-    return bm.includes(m);
+    const bm = bloquesMeses.toLowerCase();
+    
+    // Exact or direct match
+    if (bm.includes(m)) return true;
+
+    // Special edge cases from SEP abbreviations
+    if (m === "mayo" && bm.includes("abril") && (bm.includes("jun") || bm.includes("jul"))) return true;
+    if (m === "octubre" && bm.includes("oct")) return true;
+    if (m === "noviembre" && bm.includes("nov")) return true;
+    if (m === "diciembre" && bm.includes("dic")) return true;
+    if (m === "enero" && bm.includes("ene")) return true;
+    if (m === "febrero" && bm.includes("feb")) return true;
+    if (m === "marzo" && bm.includes("mar")) return true;
+    if (m === "septiembre" && (bm.includes("sep") || bm.includes("set"))) return true;
+    if (bm === "todo el ciclo") return true; 
+
+    return false;
 }
 
 export default async function MaestrosGradoPage(props: { params: Promise<{ grado: string }> }) {

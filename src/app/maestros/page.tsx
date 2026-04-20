@@ -11,7 +11,7 @@ export const metadata = {
 export default async function MaestrosPage() {
     // Array of slugs that are fully populated in src/data and ready for production
     const CURRENTLY_AVAILABLE_SLUGS = [
-        "preescolar-1", "preescolar-2", "kinder",
+        "preescolar-1", "preescolar-2", "preescolar-3", "kinder",
         "primaria-1", "primaria-2", "primaria-3", "primaria-4", "primaria-5", "primaria-6",
         "secundaria-1", "secundaria-2", "secundaria-3",
         "telesecundaria-1", "telesecundaria-2", "telesecundaria-3"
