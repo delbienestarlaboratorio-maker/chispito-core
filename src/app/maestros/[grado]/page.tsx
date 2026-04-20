@@ -1,20 +1,31 @@
-"use client";
-import { useParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import BuscadorPagina from "@/components/BuscadorPagina";
 import { GRADOS } from "@/data/curriculum";
-import { PREESCOLAR_1_COMPLETE } from "@/data/content-preescolar1";
 import type { GradoContenido } from "@/data/content-types";
+import { MATERIA_ICONS } from "./materia-icons";
+import DownloadPdfButton from "./DownloadPdfButton";
 
-const CONTENIDO_MAP: Record<string, GradoContenido> = {
-    "preescolar-1": PREESCOLAR_1_COMPLETE,
-};
-
-const MATERIA_ICONS: Record<string, string> = {
-    artes: "🎨", conocimiento: "🔍", educacion_fisica: "🏃",
-    espanol: "📖", matematicas: "📐", lenguaje: "🗣️",
-};
+async function getGradoData(slug: string): Promise<GradoContenido | undefined> {
+    switch (slug) {
+        case "preescolar-1": return (await import("@/data/content-preescolar1")).PREESCOLAR_1_COMPLETE;
+        case "preescolar-2": return (await import("@/data/content-grados-superiores")).PREESCOLAR_2;
+        case "kinder": return (await import("@/data/content-kinder")).KINDER;
+        case "primaria-1": return (await import("@/data/content-primaria")).PRIMARIA_1;
+        case "primaria-2": return (await import("@/data/content-primaria")).PRIMARIA_2;
+        case "primaria-3": return (await import("@/data/content-primaria3")).PRIMARIA_3;
+        case "primaria-4": return (await import("@/data/content-grados-superiores")).PRIMARIA_4;
+        case "primaria-5": return (await import("@/data/content-grados-superiores")).PRIMARIA_5;
+        case "primaria-6": return (await import("@/data/content-grados-superiores")).PRIMARIA_6;
+        case "secundaria-1": return (await import("@/data/content-grados-superiores")).SECUNDARIA_1;
+        case "secundaria-2": return (await import("@/data/content-grados-superiores")).SECUNDARIA_2;
+        case "secundaria-3": return (await import("@/data/content-grados-superiores")).SECUNDARIA_3;
+        case "telesecundaria-1": return (await import("@/data/content-telesecundaria")).TELESECUNDARIA_1;
+        case "telesecundaria-2": return (await import("@/data/content-telesecundaria")).TELESECUNDARIA_2;
+        case "telesecundaria-3": return (await import("@/data/content-telesecundaria")).TELESECUNDARIA_3;
+        default: return undefined;
+    }
+}
 
 // SEP school calendar months (ciclo 2024-2025)
 const MESES_SEP = [
@@ -44,10 +55,10 @@ function mesMatchesBloque(mesSep: string, bloquesMeses: string): boolean {
     return bm.includes(m);
 }
 
-export default function MaestrosGradoPage() {
-    const params = useParams();
-    const gradoSlug = params.grado as string;
-    const gradoData = CONTENIDO_MAP[gradoSlug];
+export default async function MaestrosGradoPage(props: { params: Promise<{ grado: string }> }) {
+    const params = await props.params;
+    const gradoSlug = params.grado;
+    const gradoData = await getGradoData(gradoSlug);
     const gradoInfo = GRADOS.find(g => g.slug === gradoSlug);
 
     if (!gradoData || !gradoInfo) {
@@ -239,43 +250,13 @@ export default function MaestrosGradoPage() {
                                                     </div>
                                                 )}
 
-                                                {/* PDF button */}
-                                                <button onClick={() => {
-                                                    const w = window.open('', '_blank', 'width=800,height=900');
-                                                    if (!w) return;
-                                                    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Ficha - ${bloque.nombre}</title>
-                                                    <style>body{font-family:system-ui,sans-serif;max-width:700px;margin:2rem auto;color:#1E293B;padding:0 1rem}
-                                                    h1{font-size:1.4rem;border-bottom:3px solid ${materia.color};padding-bottom:0.5rem;color:${materia.color}}
-                                                    h2{font-size:1rem;margin:1.2rem 0 0.4rem;color:#334155}
-                                                    .badge{display:inline-block;background:#F1F5F9;padding:0.2rem 0.5rem;border-radius:0.3rem;font-size:0.8rem;margin:0.15rem}
-                                                    .box{background:#F8FAFC;border-left:3px solid ${materia.color};padding:0.6rem 0.8rem;border-radius:0 0.4rem 0.4rem 0;margin:0.5rem 0}
-                                                    ul{margin:0.3rem 0;padding-left:1.2rem}li{margin:0.2rem 0;font-size:0.9rem}
-                                                    .meta{color:#64748B;font-size:0.8rem}
-                                                    .footer{margin-top:2rem;padding-top:1rem;border-top:1px solid #E2E8F0;font-size:0.75rem;color:#94A3B8;text-align:center}
-                                                    @media print{body{margin:1rem}}</style></head><body>
-                                                    <div class="meta">${MATERIA_ICONS[slug] || materia.emoji} ${materia.nombre} · Bloque ${bloque.bloque} · ${bloque.meses} · ${gradoData.nombre}</div>
-                                                    <h1>${bloque.nombre}</h1>
-                                                    ${gm ? `<div class="box"><strong>🎯 Objetivo:</strong> ${gm.objetivo}</div>
-                                                    <div class="box"><strong>📋 Competencia SEP:</strong> ${gm.competencia}</div>
-                                                    ${gm.aprendizajesEsperados ? `<h2>✅ Aprendizajes Esperados</h2><ul>${gm.aprendizajesEsperados.map((a: string) => `<li>${a}</li>`).join('')}</ul>` : ''}
-                                                    ${gm.secuenciaDidactica ? `<h2>📝 Secuencia Didáctica</h2><ul>${gm.secuenciaDidactica.map((s: string) => `<li>${s}</li>`).join('')}</ul>` : ''}
-                                                    ${gm.preguntasDetonadoras ? `<h2>💡 Preguntas Detonadoras</h2><ul>${gm.preguntasDetonadoras.map((p: string) => `<li><em>"${p}"</em></li>`).join('')}</ul>` : ''}
-                                                    ${gm.materialesSugeridos ? `<h2>📦 Materiales</h2><div>${gm.materialesSugeridos.map((m: string) => `<span class="badge">${m}</span>`).join(' ')}</div>` : ''}
-                                                    ${gm.evaluacion ? `<h2>📊 Evaluación</h2><p>${gm.evaluacion}</p>` : ''}` : ''}
-                                                    ${enClase.length > 0 ? `<h2>📌 Actividades en Clase</h2><div>${enClase.map((a: string) => `<span class="badge">${a}</span>`).join(' ')}</div>` : ''}
-                                                    <div class="footer">Chispito.mx — Ficha pedagógica · ${gradoData.nombre}</div>
-                                                    <script>setTimeout(()=>window.print(),400)<\/script>
-                                                    </body></html>`);
-                                                    w.document.close();
-                                                }}
-                                                    style={{
-                                                        display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem",
-                                                        padding: "0.5rem", borderRadius: "0.5rem", border: "none", cursor: "pointer",
-                                                        background: `linear-gradient(135deg,${materia.color},${materia.color}AA)`,
-                                                        color: "white", fontSize: "0.75rem", fontWeight: 700, width: "100%",
-                                                    }}>
-                                                    📥 Descargar PDF
-                                                </button>
+                                                <DownloadPdfButton
+                                                    slug={slug}
+                                                    materia={materia}
+                                                    bloque={bloque}
+                                                    gradoNombre={gradoData.nombre}
+                                                    enClase={enClase}
+                                                />
                                             </div>
                                         );
                                     })}

@@ -9,11 +9,13 @@ export const metadata = {
 };
 
 export default async function MaestrosPage() {
-    // Lazy-load heavy content data to reduce Edge worker bundle (3 MiB limit)
-    const { PREESCOLAR_1_COMPLETE } = await import("@/data/content-preescolar1");
-    const CONTENIDO_MAP: Record<string, GradoContenido> = {
-        "preescolar-1": PREESCOLAR_1_COMPLETE,
-    };
+    // Array of slugs that are fully populated in src/data and ready for production
+    const CURRENTLY_AVAILABLE_SLUGS = [
+        "preescolar-1", "preescolar-2", "kinder",
+        "primaria-1", "primaria-2", "primaria-3", "primaria-4", "primaria-5", "primaria-6",
+        "secundaria-1", "secundaria-2", "secundaria-3",
+        "telesecundaria-1", "telesecundaria-2", "telesecundaria-3"
+    ];
     return (
         <>
             <Navbar />
@@ -34,7 +36,7 @@ export default async function MaestrosPage() {
                 <section style={{ maxWidth: "900px", margin: "0 auto", padding: "0 1rem 4rem" }}>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: "1rem" }}>
                         {GRADOS.map(g => {
-                            const available = !!CONTENIDO_MAP[g.slug];
+                            const available = CURRENTLY_AVAILABLE_SLUGS.includes(g.slug);
                             if (available) {
                                 return (
                                     <Link key={g.slug} href={`/maestros/${g.slug}`}
